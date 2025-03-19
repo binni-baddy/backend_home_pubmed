@@ -1,12 +1,20 @@
 import typer
-from pubmed_fetcher import fetch_pubmed_ids, fetch_paper_details, save_to_csv
+from pubmed_fetcher.pubmed_fetcher import fetch_pubmed_ids, fetch_paper_details, save_to_csv
 
+# Initialize Typer app
 app = typer.Typer()
 
 @app.command()
-def search(query: str, file: str = typer.Option(None, "--file", "-f"), debug: bool = False):
+def search(
+    query: str = typer.Option(..., "--query", "-q", help="Search term for PubMed"),
+    file: str = typer.Option(None, "--file", "-f", help="Output file name"),
+    debug: bool = typer.Option(False, "--debug", "-d", help="Enable debug mode")
+):
+
     """Fetch and display PubMed papers based on a query, filtering for non-academic authors."""
-    
+
+    typer.echo("✅ Imports successful. Now executing main logic...")
+
     if debug:
         typer.echo(f"🔍 Searching for: {query}")
 
@@ -25,8 +33,13 @@ def search(query: str, file: str = typer.Option(None, "--file", "-f"), debug: bo
         save_to_csv(papers, file)
         typer.echo(f"✅ Results saved to {file}")
     else:
+        typer.echo("📄 Retrieved Papers:")
         for paper in papers:
             typer.echo(paper)
 
-if __name__ == "__main__":
+# Ensuring CLI execution in Poetry
+def main():
     app()
+
+if __name__ == "__main__":
+    main()
