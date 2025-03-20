@@ -1,6 +1,6 @@
 import requests
 import pandas as pd
-import xml.etree.ElementTree as ET  # ✅ Import ElementTree properly
+import xml.etree.ElementTree as ET
 from typing import List, Dict
 
 
@@ -13,7 +13,6 @@ COMPANY_KEYWORDS = ["inc", "pharma", "biotech", "corp", "ltd", "gmbh", "s.a.", "
 ACADEMIC_KEYWORDS = ["university", "college", "school", "institute of technology", "hospital", "med school"]
 
 def fetch_pubmed_ids(query: str) -> List[str]:
-    """Fetch PubMed IDs based on a query."""
     params = {
         "db": "pubmed",
         "term": query,
@@ -26,7 +25,6 @@ def fetch_pubmed_ids(query: str) -> List[str]:
     return data.get("esearchresult", {}).get("idlist", [])
 
 def fetch_paper_details(pubmed_ids: List[str]) -> List[Dict]:
-    """Fetch details for a list of PubMed IDs and filter papers with non-academic authors."""
     print("✅ Function Started: fetch_paper_details()")
 
     papers = []
@@ -42,14 +40,14 @@ def fetch_paper_details(pubmed_ids: List[str]) -> List[Dict]:
         response = requests.get(PUBMED_DETAILS_URL, params=params)
         response.raise_for_status()
 
-        # ✅ Print the API Response for debugging
+        
         print(f"📄 API Response for {pmid} (First 500 chars):\n{response.text[:500]}\n")
 
-        # ✅ Save response for manual verification
+        
         with open(f"debug_{pmid}.xml", "w", encoding="utf-8") as f:
             f.write(response.text)
 
-        # ✅ Fix: Ensure `ET` is imported correctly
+       
         import xml.etree.ElementTree as ET  
 
         try:
@@ -57,13 +55,13 @@ def fetch_paper_details(pubmed_ids: List[str]) -> List[Dict]:
             print(f"✅ XML Parsed Successfully for PubMed ID: {pmid}")
         except ET.ParseError as e:
             print(f"❌ XML Parsing Error for {pmid}: {e}")
-            continue  # Skip this PubMed ID if XML is broken
+            continue  
 
-        # Extract Title
+        
         title_element = root.find(".//ArticleTitle")
         title = title_element.text if title_element is not None else "Unknown"
 
-        # Extract Publication Date
+        
         pub_date_element = root.find(".//PubDate/Year")
         pub_date = pub_date_element.text if pub_date_element is not None else "Unknown"
 
@@ -607,13 +605,12 @@ def fetch_paper_details(pubmed_ids: List[str]) -> List[Dict]:
     return papers
 
 def save_to_csv(papers: List[Dict], filename: str):
-    """Save fetched paper details to a CSV file."""
     df = pd.DataFrame(papers)
     df.to_csv(filename, index=False, encoding="utf-8-sig")
 
 def main():
     print("Fetching PubMed IDs...")
-    query = "biotechnology"  # Example query, replace with user input if needed
+    query = "biotechnology"  
     pubmed_ids = fetch_pubmed_ids(query)
     print(f"Fetched {len(pubmed_ids)} PubMed IDs:", pubmed_ids)
 
@@ -628,7 +625,7 @@ def main():
     else:
         print("No papers found with non-academic authors.")
 
-# Ensure script runs when executed directly
+
 if __name__ == "__main__":
     main()
 

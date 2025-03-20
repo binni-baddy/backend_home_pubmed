@@ -1,7 +1,7 @@
 import typer
 from pubmed_fetcher.pubmed_fetcher import fetch_pubmed_ids, fetch_paper_details, save_to_csv
 
-# Initialize Typer app
+
 app = typer.Typer()
 
 @app.command()
@@ -37,7 +37,7 @@ def search(
         for paper in papers:
             typer.echo(paper)
 
-# Ensuring CLI execution in Poetry
+
 def main():
     app()
 
